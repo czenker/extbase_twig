@@ -105,8 +105,8 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
 
         $templateName = $controllerName.'/'.$actionName.'.'.$formatName.'.twig';
 
-        $this->twigEnvironment->useLoader(Tx_ExtbaseTwig_Twig_Environment::LOADER_TEMPLATE);
-        return $this->twigEnvironment->render($templateName, $this->variables);
+        $template = $this->twigEnvironment->loadTemplate($templateName, Tx_ExtbaseTwig_Twig_Environment::LOADER_TEMPLATE);
+        return $template->render($this->variables);
     }
 
     /**

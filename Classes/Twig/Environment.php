@@ -105,12 +105,12 @@ class Tx_ExtbaseTwig_Twig_Environment extends Twig_Environment {
 
 
 
-    public function loadTemplate($name, $type = null) {
+    public function loadTemplate($name, $type = self::LOADER_LAYOUT) {
         $this->useLoader($type);
         return parent::loadTemplate($name);
     }
 
-    public function resolveTemplate($names, $type = null)
+    public function resolveTemplate($names, $type = self::LOADER_LAYOUT)
     {
         if (!is_array($names)) {
             $names = array($names);
