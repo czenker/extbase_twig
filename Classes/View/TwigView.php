@@ -26,7 +26,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
     protected $twigLoader;
 
     /**
-     * @var Twig_Environment
+     * @var Tx_ExtbaseTwig_Twig_Environment
      */
     protected $twigEnvironment;
 
@@ -105,6 +105,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
 
         $templateName = $controllerName.'/'.$actionName.'.'.$formatName.'.twig';
 
+        $this->twigEnvironment->useLoader(Tx_ExtbaseTwig_Twig_Environment::LOADER_TEMPLATE);
         return $this->twigEnvironment->render($templateName, $this->variables);
     }
 
@@ -116,11 +117,6 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
      */
     public function initializeView() {
         $this->initTwigAutoloader();
-
-        $extKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
-        $defaultTemplateRootPath = t3lib_extMgm::extPath($extKey).'Resources/Private/Templates';
-
-        $this->twigLoader = new Twig_Loader_Filesystem(array($defaultTemplateRootPath));
 
         $this->initTwigEnvironment();
 
@@ -138,13 +134,26 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
     }
 
     protected function initTwigEnvironment() {
-        $this->twigEnvironment = new Tx_ExtbaseTwig_Twig_Environment($this->twigLoader, array(
-//            'cache' => 'typo3temp/twig/',
+        $this->twigEnvironment = new Tx_ExtbaseTwig_Twig_Environment(null, array(
+            //'cache' => 'typo3temp/twig/',
         ));
+
+        // set loaders
+        $extKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
+
+        $defaultTemplateRootPath = t3lib_extMgm::extPath($extKey).'Resources/Private/Templates';
+        $this->twigEnvironment->setTemplateLoader(new Twig_Loader_Filesystem(array($defaultTemplateRootPath)));
+
+        $defaultPartialRootPath = t3lib_extMgm::extPath($extKey).'Resources/Private/Partials';
+        $this->twigEnvironment->setPartialLoader(new Twig_Loader_Filesystem(array($defaultPartialRootPath)));
+
+        $defaultLayoutRootPath = t3lib_extMgm::extPath($extKey).'Resources/Private/Layouts';
+        $this->twigEnvironment->setLayoutLoader(new Twig_Loader_Filesystem(array($defaultLayoutRootPath)));
 
         // set extbase controller context as global
         $this->twigEnvironment->setControllerContext($this->controllerContext);
         // init extensions
+        $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Core());
         $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Link());
         $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Image());
     }
