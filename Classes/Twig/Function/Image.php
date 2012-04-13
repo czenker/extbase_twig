@@ -32,7 +32,7 @@ class Tx_ExtbaseTwig_Twig_Function_Image {
 
         $imageSource = $GLOBALS['TSFE']->absRefPrefix . t3lib_div::rawUrlEncodeFP($imageInfo[3]);
 
-        return $imageSource;
+        return new Tx_ExtbaseTwig_Twig_Model_Image($imageSource, $imageInfo[0], $imageInfo[1]);
 
     }
 
