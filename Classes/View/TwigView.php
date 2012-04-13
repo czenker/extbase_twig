@@ -15,7 +15,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
 
     /**
      * variables for the template
-     * 
+     *
      * @var array
      */
     protected $variables = array();
@@ -23,7 +23,12 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
     /**
      * @var Twig_Loader_Filesystem
      */
-    protected $loader;
+    protected $twigLoader;
+
+    /**
+     * @var Twig_Environment
+     */
+    protected $twigEnvironment;
 
     /**
      * @var string
@@ -94,18 +99,13 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
      */
     public function render()
     {
-
         $controllerName = $this->controllerContext->getRequest()->getControllerName();
         $actionName = $this->controllerContext->getRequest()->getControllerActionName();
         $formatName = $this->controllerContext->getRequest()->getFormat();
 
         $templateName = $controllerName.'/'.$actionName.'.'.$formatName.'.twig';
 
-        $twig = new Twig_Environment($this->loader, array(
-            'cache' => 'typo3temp/twig/',
-        ));
-
-        return $twig->render($templateName, $this->variables);
+        return $this->twigEnvironment->render($templateName, $this->variables);
     }
 
     /**
@@ -120,7 +120,9 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
         $extKey = $this->controllerContext->getRequest()->getControllerExtensionKey();
         $defaultTemplateRootPath = t3lib_extMgm::extPath($extKey).'Resources/Private/Templates';
 
-        $this->loader = new Twig_Loader_Filesystem(array($defaultTemplateRootPath));
+        $this->twigLoader = new Twig_Loader_Filesystem(array($defaultTemplateRootPath));
+
+        $this->initTwigEnvironment();
 
     }
 
@@ -135,6 +137,12 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
         }
     }
 
+    protected function initTwigEnvironment() {
+        $this->twigEnvironment = new Twig_Environment($this->twigLoader, array(
+//            'cache' => 'typo3temp/twig/',
+        ));
+    }
+
     /**
      * add another template root path
      *
@@ -143,6 +151,6 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
     public function setTemplateRootPath($templateRootPath) {
         // @todo this could be an array with fallback
 
-        $this->loader->addPath($templateRootPath);
+        $this->twigLoader->addPath($templateRootPath);
     }
 }
