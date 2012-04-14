@@ -155,7 +155,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
         // init extensions
         $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Core());
         $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Link());
-        $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Image());
+        $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_CObject());
 	    $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Translation());
     }
 
