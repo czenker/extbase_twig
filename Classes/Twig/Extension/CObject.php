@@ -12,16 +12,16 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 	public function getFunctions()
 	{
 		return array(
-			'image' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::image'),
+			'image' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::image', array('needs_environment' => true)),
 			'cObject' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cObject', array('needs_environment' => true)),
-			'rte' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::rte', array('is_safe' => array('html'))),
-			'crop' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::crop'),
-			'cropHTML' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cropHTML', array('is_safe' => array('html'))),
+			'rte' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::rte', array('needs_environment' => true, 'is_safe' => array('html'))),
+			'crop' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::crop', array('needs_environment' => true)),
+			'cropHTML' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cropHTML', array('needs_environment' => true, 'is_safe' => array('html'))),
 		);
 	}
 
 
-	public static function image($src, $width, $height)
+	public static function image(Tx_ExtbaseTwig_Twig_Environment $env, $src, $width, $height)
 	{
 		if (TYPO3_MODE === 'BE') {
 			throw new RuntimeException(get_class(self) . ' currently only works in Frontend.');
@@ -32,7 +32,8 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 			'height' => $height,
 		);
 
-		$imageInfo = self::getCObject()->getImgResource($src, $setup);
+		$cObject = $env->getControllerContext()->getConfigurationManager()->getContentObject();
+		$imageInfo = $cObject->getImgResource($src, $setup);
 		$GLOBALS['TSFE']->lastImageInfo = $imageInfo;
 		if (!is_array($imageInfo)) {
 			throw new InvalidArgumentException('Could not get image resource for "' . htmlspecialchars($src) . '".', 1253191060);
@@ -68,7 +69,7 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 			$data = array($data);
 		}
 
-		$cObject = self::getCObject();
+		$cObject = $env->getControllerContext()->getConfigurationManager()->getContentObject();
 
 		$cObject->start($data);
 		if (isset($currentValue)) {
@@ -79,7 +80,7 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 
 		$pathSegments = t3lib_div::trimExplode('.', $typoscriptObjectPath);
 		$lastSegment = array_pop($pathSegments);
-		$setup = self::getConfigurationManger()->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+		$setup = $env->getControllerContext()->getConfigurationManager()->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
 
 		foreach ($pathSegments as $segment) {
 			if (!array_key_exists($segment . '.', $setup)) {
@@ -98,43 +99,23 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 	 * @return string
 	 * @throws RuntimeException
 	 */
-	public function rte($value, $parseFuncTSPath = 'lib.parseFunc_RTE') {
+	public function rte(Tx_ExtbaseTwig_Twig_Environment $env, $value, $parseFuncTSPath = 'lib.parseFunc_RTE') {
 		if (TYPO3_MODE === 'BE') {
 			throw new RuntimeException(get_class(self) . ' currently only works in Frontend.');
 		}
 
-		return self::getCObject()->parseFunc($value, array(), '< ' . $parseFuncTSPath);
+		$cObject = $env->getControllerContext()->getConfigurationManager()->getContentObject();
+		return $cObject->parseFunc($value, array(), '< ' . $parseFuncTSPath);
 	}
 
-	public function crop($stringToTruncate, $maxCharacters, $append = '...', $respectWordBoundaries = TRUE) {
-		return self::getCObject()->crop($stringToTruncate, $maxCharacters . '|' . $append . '|' . $respectWordBoundaries);
+	public function crop(Tx_ExtbaseTwig_Twig_Environment $env, $stringToTruncate, $maxCharacters, $append = '...', $respectWordBoundaries = TRUE) {
+		$cObject = $env->getControllerContext()->getConfigurationManager()->getContentObject();
+		return $cObject->crop($stringToTruncate, $maxCharacters . '|' . $append . '|' . $respectWordBoundaries);
 	}
 
-	public function cropHTML($stringToTruncate, $maxCharacters, $append = '...', $respectWordBoundaries = TRUE) {
-		return self::getCObject()->cropHTML($stringToTruncate, $maxCharacters . '|' . $append . '|' . $respectWordBoundaries);
-	}
-
-	/**
-	 * @return tslib_cObj
-	 */
-	protected static function getCObject() {
-		if(is_null(self::$cObject)) {
-			self::$cObject = self::getConfigurationManger()->getContentObject();
-		}
-
-		return self::$cObject;
-	}
-
-	/**
-	 * @static
-	 * @return Tx_Extbase_Configuration_ConfigurationManagerInterface
-	 */
-	protected static function getConfigurationManger() {
-		/**
-		 * @var Tx_Extbase_Object_Manager
-		 */
-		$objectManager = t3lib_div::makeInstance('Tx_Extbase_Object_Manager');
-		return $objectManager->get('Tx_Extbase_Configuration_ConfigurationManagerInterface');
+	public function cropHTML(Tx_ExtbaseTwig_Twig_Environment $env, $stringToTruncate, $maxCharacters, $append = '...', $respectWordBoundaries = TRUE) {
+		$cObject = $env->getControllerContext()->getConfigurationManager()->getContentObject();
+		return $cObject->cropHTML($stringToTruncate, $maxCharacters . '|' . $append . '|' . $respectWordBoundaries);
 	}
 
 

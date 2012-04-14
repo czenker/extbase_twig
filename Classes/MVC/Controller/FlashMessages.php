@@ -58,4 +58,8 @@ class Tx_ExtbaseTwig_MVC_Controller_FlashMessages implements Countable, Iterator
 	{
 		return count(t3lib_FlashMessageQueue::getAllMessages());
 	}
+
+	public function __toString() {
+		return $this->count();
+	}
 }

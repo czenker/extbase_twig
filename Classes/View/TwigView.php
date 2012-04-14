@@ -9,7 +9,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
 
 
     /**
-     * @var Tx_Extbase_MVC_Controller_ControllerContext
+     * @var Tx_ExtbaseTwig_MVC_Controller_ControllerContext
      */
     protected $controllerContext;
 
