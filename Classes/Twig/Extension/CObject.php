@@ -1,5 +1,9 @@
 <?php
 
+
+/**
+ * functions/ filters that require a cObject
+ */
 class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 {
 
@@ -11,6 +15,8 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 			'image' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::image'),
 			'cObject' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cObject', array('needs_environment' => true)),
 			'rte' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::rte', array('is_safe' => array('html'))),
+			'crop' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::crop'),
+			'cropHTML' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cropHTML', array('is_safe' => array('html'))),
 		);
 	}
 
@@ -98,6 +104,14 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 		}
 
 		return self::getCObject()->parseFunc($value, array(), '< ' . $parseFuncTSPath);
+	}
+
+	public function crop($stringToTruncate, $maxCharacters, $append = '...', $respectWordBoundaries = TRUE) {
+		return self::getCObject()->crop($stringToTruncate, $maxCharacters . '|' . $append . '|' . $respectWordBoundaries);
+	}
+
+	public function cropHTML($stringToTruncate, $maxCharacters, $append = '...', $respectWordBoundaries = TRUE) {
+		return self::getCObject()->cropHTML($stringToTruncate, $maxCharacters . '|' . $append . '|' . $respectWordBoundaries);
 	}
 
 	/**
