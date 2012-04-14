@@ -10,6 +10,7 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 		return array(
 			'image' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::image'),
 			'cObject' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cObject', array('needs_environment' => true)),
+			'rte' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::rte', array('is_safe' => array('html'))),
 		);
 	}
 
@@ -83,6 +84,20 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 		$content = $cObject->cObjGetSingle($setup[$lastSegment], $setup[$lastSegment . '.']);
 
 		return $content;
+	}
+
+	/**
+	 * @param string $value
+	 * @param string $parseFuncTSPath
+	 * @return string
+	 * @throws RuntimeException
+	 */
+	public function rte($value, $parseFuncTSPath = 'lib.parseFunc_RTE') {
+		if (TYPO3_MODE === 'BE') {
+			throw new RuntimeException(get_class(self) . ' currently only works in Frontend.');
+		}
+
+		return self::getCObject()->parseFunc($value, array(), '< ' . $parseFuncTSPath);
 	}
 
 	/**
