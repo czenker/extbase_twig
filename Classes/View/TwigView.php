@@ -43,7 +43,14 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
      */
     public function setControllerContext(Tx_Extbase_MVC_Controller_ControllerContext $controllerContext)
     {
-        $this->controllerContext = $controllerContext;
+	    if(
+			$controllerContext instanceof Tx_Extbase_MVC_Controller_ControllerContext &&
+			! $controllerContext instanceof Tx_ExtbaseTwig_MVC_Controller_ControllerContext
+	    ) {
+		    $this->controllerContext = Tx_ExtbaseTwig_MVC_Controller_ControllerContext::createFromExtbaseControllerContext($controllerContext);
+	    } else {
+            $this->controllerContext = $controllerContext;
+	    }
     }
 
     /**
