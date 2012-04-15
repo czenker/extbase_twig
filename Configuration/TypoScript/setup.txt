@@ -1,0 +1,9 @@
+config.tx_extbasetwig {
+	extensions {
+		Tx_ExtbaseTwig_Twig_Extension_CObject.enable = 1
+		Tx_ExtbaseTwig_Twig_Extension_Core.enable = 1
+		Tx_ExtbaseTwig_Twig_Extension_Link.enable = 1
+		Tx_ExtbaseTwig_Twig_Extension_Security.enable = 1
+		Tx_ExtbaseTwig_Twig_Extension_Translation.enable = 1
+	}
+}

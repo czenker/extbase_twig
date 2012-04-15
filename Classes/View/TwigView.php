@@ -141,6 +141,14 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
     }
 
     protected function initTwigEnvironment() {
+	    $setup = $this->controllerContext->getConfigurationManager()->getConfiguration(Tx_Extbase_Configuration_ConfigurationManagerInterface::CONFIGURATION_TYPE_FULL_TYPOSCRIPT);
+
+	    if(!array_key_exists('config.', $setup) || !array_key_exists('tx_extbasetwig.', $setup['config.'])) {
+		    throw new InvalidArgumentException('config.tx_extbasetwig was not configured');
+	    }
+
+	    $setup = $setup['config.']['tx_extbasetwig.'];
+
         $this->twigEnvironment = new Tx_ExtbaseTwig_Twig_Environment(null, array(
             //'cache' => PATH_site.'typo3temp/twig',
         ));
@@ -159,16 +167,47 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
 
         // set extbase controller context as global
         $this->twigEnvironment->setControllerContext($this->controllerContext);
-        // init extensions
-        $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Core());
-        $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Link());
-        $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_CObject());
-	    $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Translation());
-	    $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Security());
+
+		if(array_key_exists('extensions.', $setup)) {
+			$this->initExtensions($setup['extensions.']);
+		}
+
+
 
 	    // @todo this should be more selective (UriBuilder is not needed for instance)
 	    $this->twigEnvironment->addGlobal('typo3', $this->controllerContext);
     }
+
+	public function initExtensions($config) {
+
+		if(!is_array($config) && !$config instanceof Iterator) {
+			return;
+		}
+
+		foreach($config as $extensionClassName => $extensionConfig) {
+			$extensionClassName = rtrim($extensionClassName, '.');
+
+			if(!array_key_exists('enable', $extensionConfig)) {
+				throw new InvalidArgumentException(sprintf('config.tx_extbasetwig.%s.enable is not set', $extensionClassName));
+			}
+
+			if(!$extensionConfig['enable']) {
+				continue;
+			}
+
+			$extension = $this->controllerContext->getObjectManager()->get($extensionClassName);
+			if(!is_object($extension)) {
+				throw new InvalidArgumentException(sprintf('Extension class %s could not be found.'));
+			}
+			if(!$extension instanceof Twig_ExtensionInterface) {
+				throw new InvalidArgumentException(sprintf(
+					'Class %s does not implement Twig_ExtensionInterface',
+					get_class($extension)
+				));
+			}
+			$this->twigEnvironment->addExtension($extension);
+		}
+	}
 
     /**
      * add another template root path
