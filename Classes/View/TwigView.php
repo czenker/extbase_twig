@@ -164,6 +164,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
         $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Link());
         $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_CObject());
 	    $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Translation());
+	    $this->twigEnvironment->addExtension(new Tx_ExtbaseTwig_Twig_Extension_Security());
 
 	    // @todo this should be more selective (UriBuilder is not needed for instance)
 	    $this->twigEnvironment->addGlobal('typo3', $this->controllerContext);
