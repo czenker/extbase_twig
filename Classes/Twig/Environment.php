@@ -153,5 +153,46 @@ class Tx_ExtbaseTwig_Twig_Environment extends Twig_Environment {
         }
     }
 
+	/**
+	 * Gets the cache filename for a given template.
+	 *
+	 * (overridden as t3lib_div::writeFileToTypo3tempDir only
+	 * allows two subfolders below typo3_temp in TYPO3 4.5)
+	 *
+	 * @param string $name The template name
+	 *
+	 * @return string The cache file name
+	 */
+	public function getCacheFilename($name)
+	{
+		if (false === $this->cache) {
+			return false;
+		}
+
+		$class = substr($this->getTemplateClass($name), strlen($this->templateClassPrefix));
+
+		return $this->getCache().'/'.substr($class, 0, 4).'/'.substr($class, 4).'.php';
+	}
+
+	/**
+	 * use typo3 internal functions to write cache file
+	 * (in order to repect configuration)
+	 *
+	 * @param $file
+	 * @param $content
+	 * @return mixed
+	 * @throws RuntimeException|Twig_Error_Runtime
+	 */
+	protected function writeCacheFile($file, $content)
+	{
+		$state = t3lib_div::writeFileToTypo3tempDir($file, $content);
+		if(is_null($state)) {
+			// if: everything worked fine
+			return;
+		} else {
+			throw new Twig_Error_Runtime($state);
+		}
+	}
+
 
 }

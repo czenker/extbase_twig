@@ -142,7 +142,7 @@ class Tx_ExtbaseTwig_View_TwigView implements Tx_Extbase_MVC_View_ViewInterface 
 
     protected function initTwigEnvironment() {
         $this->twigEnvironment = new Tx_ExtbaseTwig_Twig_Environment(null, array(
-            //'cache' => 'typo3temp/twig/',
+            //'cache' => PATH_site.'typo3temp/twig',
         ));
 
         // set loaders
