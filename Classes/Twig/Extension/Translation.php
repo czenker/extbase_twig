@@ -6,11 +6,11 @@ class Tx_ExtbaseTwig_Twig_Extension_Translation extends Twig_Extension
 	public function getFunctions()
 	{
 		return array(
-			'translate' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Translation::translate', array('needs_environment' => true)),
+			'translate' => new Twig_Function_Method($this, 'translate', array('needs_environment' => true)),
 		);
 	}
 
-	public static function translate(Tx_ExtbaseTwig_Twig_Environment $env, $key, $arguments = array(), $extensionName = NULL)
+	public function translate(Tx_ExtbaseTwig_Twig_Environment $env, $key, $arguments = array(), $extensionName = NULL)
 	{
 		if(is_null($extensionName)) {
 			$extensionName = $env->getControllerContext()->getRequest()->getControllerExtensionName();

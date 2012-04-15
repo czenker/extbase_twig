@@ -7,24 +7,22 @@
 class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 {
 
-	protected static $cObject;
-
 	public function getFunctions()
 	{
 		return array(
-			'image' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::image', array('needs_environment' => true)),
-			'cObject' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cObject', array('needs_environment' => true)),
-			'rte' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::rte', array('needs_environment' => true, 'is_safe' => array('html'))),
-			'crop' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::crop', array('needs_environment' => true)),
-			'cropHTML' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_CObject::cropHTML', array('needs_environment' => true, 'is_safe' => array('html'))),
+			'image' => new Twig_Function_Method($this, 'image', array('needs_environment' => true)),
+			'cObject' => new Twig_Function_Method($this, 'cObject', array('needs_environment' => true)),
+			'rte' => new Twig_Function_Method($this, 'rte', array('needs_environment' => true, 'is_safe' => array('html'))),
+			'crop' => new Twig_Function_Method($this, 'crop', array('needs_environment' => true)),
+			'cropHTML' => new Twig_Function_Method($this, 'cropHTML', array('needs_environment' => true, 'is_safe' => array('html'))),
 		);
 	}
 
 
-	public static function image(Tx_ExtbaseTwig_Twig_Environment $env, $src, $width, $height)
+	public function image(Tx_ExtbaseTwig_Twig_Environment $env, $src, $width, $height)
 	{
 		if (TYPO3_MODE === 'BE') {
-			throw new RuntimeException(get_class(self) . ' currently only works in Frontend.');
+			throw new RuntimeException(get_class($this) . ' currently only works in Frontend.');
 		}
 
 		$setup = array(
@@ -56,10 +54,10 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 	 * @return string
 	 * @throws RuntimeException|InvalidArgumentException
 	 */
-	public static function cObject(Tx_ExtbaseTwig_Twig_Environment $env, $typoscriptObjectPath, $data = NULL, $currentValueKey = NULL)
+	public function cObject(Tx_ExtbaseTwig_Twig_Environment $env, $typoscriptObjectPath, $data = NULL, $currentValueKey = NULL)
 	{
 		if (TYPO3_MODE === 'BE') {
-			throw new RuntimeException(get_class(self) . ' currently only works in Frontend.');
+			throw new RuntimeException(get_class($this) . ' currently only works in Frontend.');
 		}
 
 		if (is_object($data)) {
@@ -101,7 +99,7 @@ class Tx_ExtbaseTwig_Twig_Extension_CObject extends Twig_Extension
 	 */
 	public function rte(Tx_ExtbaseTwig_Twig_Environment $env, $value, $parseFuncTSPath = 'lib.parseFunc_RTE') {
 		if (TYPO3_MODE === 'BE') {
-			throw new RuntimeException(get_class(self) . ' currently only works in Frontend.');
+			throw new RuntimeException(get_class($this) . ' currently only works in Frontend.');
 		}
 
 		$cObject = $env->getControllerContext()->getConfigurationManager()->getContentObject();

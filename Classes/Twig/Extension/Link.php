@@ -5,10 +5,10 @@ class Tx_ExtbaseTwig_Twig_Extension_Link extends Twig_Extension {
     public function getFunctions()
     {
         return array(
-            'path_page' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Link::path_page', array('needs_environment' => true)),
-            'path_action' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Link::path_action', array('needs_environment' => true)),
-            'uri_page' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Link::uri_page', array('needs_environment' => true)),
-            'uri_action' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Link::uri_action', array('needs_environment' => true)),
+            'path_page' => new Twig_Function_Method($this, 'path_page', array('needs_environment' => true)),
+            'path_action' => new Twig_Function_Method($this, 'path_action', array('needs_environment' => true)),
+            'uri_page' => new Twig_Function_Method($this, 'uri_page', array('needs_environment' => true)),
+            'uri_action' => new Twig_Function_Method($this, 'uri_action', array('needs_environment' => true)),
         );
     }
 
@@ -24,15 +24,15 @@ class Tx_ExtbaseTwig_Twig_Extension_Link extends Twig_Extension {
         return 'extbasetwig.link';
     }
 
-    public static function path_page(Twig_Environment $env, $pageUid, $options=array()) {
+    public function path_page(Twig_Environment $env, $pageUid, $options=array()) {
         $options['pageUid'] = $pageUid;
 
-        $uriBuilder = self::getInitializedUriBuilder($env, $options);
+        $uriBuilder = $this->getInitializedUriBuilder($env, $options);
 
         return $uriBuilder->build();
     }
 
-    public static function path_action(Twig_Environment $env, $action = NULL, $options=array()) {
+    public function path_action(Twig_Environment $env, $action = NULL, $options=array()) {
 
         $format = array_key_exists('format', $options) ? $options['format'] : '';
         $arguments = array_key_exists('arguments', $options) ? $options['arguments'] : array();
@@ -41,22 +41,22 @@ class Tx_ExtbaseTwig_Twig_Extension_Link extends Twig_Extension {
         $pluginName = array_key_exists('pluginName', $options) ? $options['pluginName'] : NULL;
 
 
-        return self::getInitializedUriBuilder($env, $options)
+        return $this->getInitializedUriBuilder($env, $options)
             ->setFormat($format)
             ->uriFor($action, $arguments, $controller, $extensionName, $pluginName);
     }
 
-    public static function uri_page(Twig_Environment $env, $pageUid, $options) {
+    public function uri_page(Twig_Environment $env, $pageUid, $options) {
         $options['absolute'] = true;
-        return self::path_page($env, $pageUid, $options);
+        return $this->path_page($env, $pageUid, $options);
     }
 
-    public static function uri_action(Twig_Environment $env, $action = NULL, $options=array()) {
+    public function uri_action(Twig_Environment $env, $action = NULL, $options=array()) {
         $options['absolute'] = true;
-        return self::path_action($env, $action, $options);
+        return $this->path_action($env, $action, $options);
     }
 
-    protected static function getInitializedUriBuilder($env, $options) {
+    protected function getInitializedUriBuilder($env, $options) {
         $uriBuilder = $env->getUriBuilder()->reset();
 
         if(array_key_exists('pageUid', $options)) {

@@ -6,8 +6,8 @@ class Tx_ExtbaseTwig_Twig_Extension_Security extends Twig_Extension
 	public function getFunctions()
 	{
 		return array(
-			'is_authenticated' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Security::is_authenticated'),
-			'has_role' => new Twig_Function_Function('Tx_ExtbaseTwig_Twig_Extension_Security::has_role'),
+			'is_authenticated' => new Twig_Function_Method($this, 'is_authenticated'),
+			'has_role' => new Twig_Function_Method($this, 'has_role'),
 		);
 	}
 
