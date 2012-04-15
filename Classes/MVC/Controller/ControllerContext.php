@@ -19,6 +19,10 @@ class Tx_ExtbaseTwig_MVC_Controller_ControllerContext extends Tx_Extbase_MVC_Con
 		return $this->flashMessageContainer;
 	}
 
+	public function getFlashMessages() {
+		return $this->flashMessageContainer;
+	}
+
 	/**
 	 * @var Tx_Extbase_Object_Manager
 	 */

@@ -42,7 +42,7 @@ class Tx_ExtbaseTwig_MVC_Controller_FlashMessages implements Countable, Iterator
 	public function valid()
 	{
 		$this->init();
-		return key($this->messages) !== FALSE;
+		return key($this->messages) !== NULL;
 	}
 
 
